@@ -1,0 +1,70 @@
+@startuml
+'— 2× export built-in —
+skinparam dpi 300          
+left to right direction
+hide circle              
+
+'========== DOMAIN ==========
+package "Domain" {
+  class User {
+    +userId : UUID
+    +username : String
+    +email : String
+  }
+  class Channel {
+    +channelId : UUID
+    +name : String
+  }
+  class Message {
+    +messageId : UUID
+    +content : Text
+    +createdAt : DateTime
+  }
+  class Attachment {
+    +attachmentId : UUID
+    +fileName : String
+    +url : String
+    +sizeBytes : Int
+  }
+}
+
+'========== APPLICATION ==========
+package "Application" {
+  class MessageService {
+    +postMessage(uId, chId, text, files) : void
+  }
+  class FileUploadPipeline {
+    +upload(files) : List<Attachment>
+  }
+  class ModerationService {
+    +deleteMessage(id) : void
+    +pinMessage(id)    : void
+  }
+}
+
+'========== INFRASTRUCTURE ==========
+package "Infrastructure" {
+  interface FileStorageAdapter {
+    +store(f) : Attachment
+  }
+  class S3StorageAdapter
+  class LocalFSAdapter
+  FileStorageAdapter <|.. S3StorageAdapter
+  FileStorageAdapter <|.. LocalFSAdapter
+}
+
+'========== RELATIONSHIPS ==========
+User     "1" o-- "*" Message
+Channel  "1" o-- "*" Message
+Message  "1" o-- "*" Attachment
+
+MessageService --> Message
+MessageService --> Attachment
+MessageService --> FileStorageAdapter
+
+FileUploadPipeline --> FileStorageAdapter
+FileUploadPipeline --> Attachment
+
+ModerationService --> Message
+@enduml
+

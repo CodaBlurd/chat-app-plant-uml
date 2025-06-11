@@ -1,0 +1,39 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+'— actors —
+actor Member
+actor Moderator
+actor "File Storage\nService" as Storage
+
+'— system boundary —
+rectangle "Team Chat System" {
+  (Authenticate)
+  (Create Channel)
+  (Join / Leave Channel)
+  (Post Message)
+  (Attach File)
+  (Receive Message)
+  (Moderate Content)
+}
+
+'— external UC —
+(Store File) as StoreFile
+
+'— relationships —
+Member --> (Authenticate)
+Member --> (Create Channel)
+Member --> (Join / Leave Channel)
+Member --> (Post Message)
+Member --> (Attach File)
+Member --> (Receive Message)
+
+Moderator --> (Moderate Content)
+
+Storage --> StoreFile
+
+(Attach File) --> (Store File) : <<include>>
+(Moderate Content) .u.> (Receive Message) : <<extend>>
+
+@enduml
+

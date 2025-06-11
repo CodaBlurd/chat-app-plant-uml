@@ -1,0 +1,50 @@
+@startuml
+'— optional: crisp lines for Medium —
+skinparam dpi 300        'higher-res PNG export
+left to right direction
+
+'— Entities —
+entity User {
+  *user_id : INT <<PK>>
+  --
+  username : VARCHAR
+  email    : VARCHAR
+}
+
+entity Channel {
+  *channel_id : INT <<PK>>
+  name        : VARCHAR
+}
+
+entity Membership {
+  *user_id    : INT <<FK>>
+  *channel_id : INT <<FK>>
+  joined_at   : TIMESTAMP
+}
+
+entity Message {
+  *message_id : INT <<PK>>
+  content     : TEXT
+  created_at  : TIMESTAMP
+  --
+  user_id     : INT <<FK>>
+  channel_id  : INT <<FK>>
+}
+
+entity Attachment {
+  *attachment_id : INT <<PK>>
+  file_name      : VARCHAR
+  size_bytes     : INT
+  url            : VARCHAR
+  --
+  message_id     : INT <<FK>>
+}
+
+'— Relationships —
+User     ||--o{ Membership
+Channel  ||--o{ Membership
+User     ||--o{ Message
+Channel  ||--o{ Message
+Message  ||--o{ Attachment
+@enduml
+

@@ -1,0 +1,36 @@
+@startuml
+'—— high-DPI export for Medium ——
+scale 2                
+left to right direction
+hide circle            
+
+'========== STRATEGY ========== 
+interface FileStorageAdapter {
+  +store(file) : Attachment
+}
+
+class S3StorageAdapter
+class LocalFSAdapter
+
+FileStorageAdapter <|.. S3StorageAdapter
+FileStorageAdapter <|.. LocalFSAdapter
+
+'========== PIPELINE ==========
+class FileUploadPipeline {
+  +upload(files) : List<Attachment>
+}
+
+FileUploadPipeline --> FileStorageAdapter : uses «Strategy»
+
+'========== VALUE OBJECT ==========
+class Attachment {
+  +attachmentId : UUID
+  +fileName     : String
+  +url          : String
+  +sizeBytes    : Int
+}
+
+FileUploadPipeline --> Attachment : returns
+
+@enduml
+
